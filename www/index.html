@@ -9,11 +9,55 @@
 			<input type="submit">
 		</form>
 		
+		<ul id="messages">
+			
+		</ul>
+		
 		<script type="text/javascript">
 		$("#post-form").submit(function() {
 			$.post("/sendmessage", {body : $("#body").val()});
 			return false;
 		});
+		
+		function request_messages(timestamp, callback) {
+			var query = {};
+			if(timestamp > 0) query.timestamp = timestamp;
+			$.ajax({
+				url: "/comet",
+				data: query,
+				dataType: "json",
+				cache: false,
+				type: "get",
+				success: function(json) {
+					var i;
+					for(i = 0; i < json.messages.length; i++) {
+						try {
+							callback(json.messages[i])
+						}
+						catch(e) {
+						}
+					}
+					request_messages(json.timestamp, callback);
+				},
+				error: function() {
+					console.log("error ");
+					setTimeout(500, request_messages(timestamp, callback));
+				}
+			});
+			
+		}
+		
+		function draw_message(message) {
+			while($("#messages li").length > 10) {
+				$("#messages li:last").remove();
+			}
+			
+			$("#messages").prepend("<li>"+message+"</li>");
+		}
+		
+		$(function() {
+			request_messages(undefined, draw_message);
+		})
 		</script>
 	</body>
 </html>
