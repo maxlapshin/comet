@@ -10,7 +10,7 @@ init({tcp, http}, Req, Opts) ->
 handle(Req, State) ->
   {Post, Req2} = cowboy_http_req:body_qs(Req),
   {<<"body">>, Body} = lists:keyfind(<<"body">>, 1, Post),
-  tinymq:push(<<"default_channel">>, Body),
+  tinymq:push(<<"default_channel">>, {message, Body}),
   {ok, Req3} = cowboy_http_req:reply(200, [], <<"Got it\n">>, Req2),
   {ok, Req3, State}.
 
