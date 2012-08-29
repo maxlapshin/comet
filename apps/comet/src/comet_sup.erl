@@ -24,5 +24,13 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+  Children = [{
+    mq,
+    {tinymq_sup, start_link, [[]]},
+    permanent,
+    infinity,
+    supervisor,
+    []
+  }],
+  {ok, { {one_for_one, 5, 10}, Children} }.
 
