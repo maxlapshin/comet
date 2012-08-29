@@ -21,6 +21,7 @@ start(_StartType, _StartArgs) ->
   
   Routes = [
     {[<<"comet">>], comet_handler, []},
+    {[<<"sendmessage">>], sendmessage_handler, []},
     {[], cowboy_http_static, [
       {directory, <<"www">>},
       {file, <<"index.html">>},
